@@ -6,10 +6,8 @@ use Backend\Http\Requests;
 use Illuminate\Http\Request;
 use Backend\Http\Controllers\Controller;
 use Backend\Repositories\CategoryRepository;
-use Backend\Http\Requests\CategoryCreateRequest;
+use Backend\Http\Requests\CategoryRequest;
 use Backend\Http\Requests\CategoryUpdateRequest;
-use Prettus\Validator\Contracts\ValidatorInterface;
-use Prettus\Validator\Exceptions\ValidatorException;
 
 class CategoriesController extends Controller
 {
@@ -37,40 +35,13 @@ class CategoriesController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  CategoryCreateRequest $request
-     *
-     * @return \Illuminate\Http\Response
+     * @param CategoryRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(CategoryCreateRequest $request)
+    public function store(CategoryRequest $request)
     {
-
-        try {
-
-            $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_CREATE);
-
-            $category = $this->repository->create($request->all());
-
-            $response = [
-                'message' => 'Category created.',
-                'data'    => $category->toArray(),
-            ];
-
-            if ($request->wantsJson()) {
-
-                return response()->json($response);
-            }
-
-            return redirect()->back()->with('message', $response['message']);
-        } catch (ValidatorException $e) {
-            if ($request->wantsJson()) {
-                return response()->json([
-                    'error'   => true,
-                    'message' => $e->getMessageBag()
-                ]);
-            }
-
-            return redirect()->back()->withErrors($e->getMessageBag())->withInput();
-        }
+        $category = $this->repository->create($request->all());
+        return response()->json($category, 201);
     }
 
 
@@ -88,43 +59,14 @@ class CategoriesController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  CategoryUpdateRequest $request
-     * @param  string            $id
-     *
-     * @return Response
+     * @param CategoryRequest $request
+     * @param string $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(CategoryUpdateRequest $request, $id)
+    public function update(CategoryRequest $request, $id)
     {
-
-        try {
-
-            $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_UPDATE);
-
-            $category = $this->repository->update($id, $request->all());
-
-            $response = [
-                'message' => 'Category updated.',
-                'data'    => $category->toArray(),
-            ];
-
-            if ($request->wantsJson()) {
-
-                return response()->json($response);
-            }
-
-            return redirect()->back()->with('message', $response['message']);
-        } catch (ValidatorException $e) {
-
-            if ($request->wantsJson()) {
-
-                return response()->json([
-                    'error'   => true,
-                    'message' => $e->getMessageBag()
-                ]);
-            }
-
-            return redirect()->back()->withErrors($e->getMessageBag())->withInput();
-        }
+        $category = $this->repository->update($request->all(), $id);
+        return response()->json($category, 200);
     }
 
 

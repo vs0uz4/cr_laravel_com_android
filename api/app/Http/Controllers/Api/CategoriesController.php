@@ -2,15 +2,14 @@
 
 namespace Backend\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
-
 use Backend\Http\Requests;
-use Prettus\Validator\Contracts\ValidatorInterface;
-use Prettus\Validator\Exceptions\ValidatorException;
+use Illuminate\Http\Request;
+use Backend\Http\Controllers\Controller;
+use Backend\Repositories\CategoryRepository;
 use Backend\Http\Requests\CategoryCreateRequest;
 use Backend\Http\Requests\CategoryUpdateRequest;
-use Backend\Repositories\CategoryRepository;
-
+use Prettus\Validator\Contracts\ValidatorInterface;
+use Prettus\Validator\Exceptions\ValidatorException;
 
 class CategoriesController extends Controller
 {
@@ -25,25 +24,14 @@ class CategoriesController extends Controller
         $this->repository = $repository;
     }
 
-
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return mixed
      */
     public function index()
     {
-        $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
-        $categories = $this->repository->all();
-
-        if (request()->wantsJson()) {
-
-            return response()->json([
-                'data' => $categories,
-            ]);
-        }
-
-        return view('categories.index', compact('categories'));
+        return $this->repository->all();
     }
 
     /**
@@ -89,40 +77,13 @@ class CategoriesController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int $id
-     *
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return mixed
      */
     public function show($id)
     {
-        $category = $this->repository->find($id);
-
-        if (request()->wantsJson()) {
-
-            return response()->json([
-                'data' => $category,
-            ]);
-        }
-
-        return view('categories.show', compact('category'));
+        return $this->repository->find($id);
     }
-
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-
-        $category = $this->repository->find($id);
-
-        return view('categories.edit', compact('category'));
-    }
-
 
     /**
      * Update the specified resource in storage.

@@ -177,6 +177,7 @@ return [
         // Backend\Providers\BroadcastServiceProvider::class,
         Backend\Providers\EventServiceProvider::class,
         Backend\Providers\RouteServiceProvider::class,
+        Backend\Providers\RepositoryServiceProvider::class,
 
     ],
 

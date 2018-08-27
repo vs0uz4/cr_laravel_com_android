@@ -29,3 +29,14 @@ $factory->define(Backend\Models\Category::class, function (Faker\Generator $fake
         'name' => $faker->name,
     ];
 });
+
+/** @var \Illuminate\Database\Eloquent\Factory $factory */
+$factory->define(Backend\Models\BillPay::class, function (Faker\Generator $faker) {
+    return [
+        'name' => $faker->name,
+        'date_due' => $faker->date(),
+        'value' => $faker->randomFloat(2,100,10000),
+        'done' => (bool) rand(0,1),
+        'category_id' => rand(1, 50)
+    ];
+});

@@ -2,12 +2,9 @@
 
 namespace Backend\Http\Controllers\Api;
 
-use Backend\Http\Requests;
-use Illuminate\Http\Request;
 use Backend\Http\Controllers\Controller;
 use Backend\Repositories\CategoryRepository;
 use Backend\Http\Requests\CategoryRequest;
-use Backend\Http\Requests\CategoryUpdateRequest;
 
 class CategoriesController extends Controller
 {
@@ -69,26 +66,20 @@ class CategoriesController extends Controller
         return response()->json($category, 200);
     }
 
-
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
-     *
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {
         $deleted = $this->repository->delete($id);
 
-        if (request()->wantsJson()) {
-
-            return response()->json([
-                'message' => 'Category deleted.',
-                'deleted' => $deleted,
-            ]);
+        if ($deleted){
+            return response()->json([], 204);
+        } else {
+            return response()->json(['error' => 'resource_can_not_be_deleted'], 500);
         }
-
-        return redirect()->back()->with('message', 'Category deleted.');
     }
 }

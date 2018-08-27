@@ -24,4 +24,14 @@ class AuthController extends Controller
 
         return response()->json(compact('token'));
     }
+
+    public function logout()
+    {
+        try {
+            \JWTAuth::invalidate();
+        } catch (JWTException $ex) {
+            return response()->json(['error' => 'could_not_invalidate_token'], 500);
+        }
+        return response()->json([], 204);
+    }
 }

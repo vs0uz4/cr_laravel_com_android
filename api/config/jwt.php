@@ -73,7 +73,7 @@ return [
     |
     */
 
-    'user' => Backend\User::class,
+    'user' => Backend\Models\User::class,
 
     /*
     |--------------------------------------------------------------------------

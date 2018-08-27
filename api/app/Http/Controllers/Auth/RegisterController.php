@@ -2,7 +2,7 @@
 
 namespace Backend\Http\Controllers\Auth;
 
-use Backend\User;
+use Backend\Models\User;
 use Backend\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;

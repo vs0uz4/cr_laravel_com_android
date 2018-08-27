@@ -12,11 +12,11 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
         // Create Administrator User
-        factory(\Backend\User::class, 1)->create([
+        factory(\Backend\Models\User::class, 1)->create([
             'email' => 'admin@backend.com.br'
         ]);
 
         // Create Fake Users
-        factory(\Backend\User::class, 20)->create();
+        factory(\Backend\Models\User::class, 20)->create();
     }
 }

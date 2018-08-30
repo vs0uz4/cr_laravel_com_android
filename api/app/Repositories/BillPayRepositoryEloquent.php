@@ -2,6 +2,7 @@
 
 namespace Backend\Repositories;
 
+use Backend\Presenters\BillPayPresenter;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Backend\Models\BillPay;
@@ -28,6 +29,16 @@ class BillPayRepositoryEloquent extends BaseRepository implements BillPayReposit
     public function boot()
     {
         $this->pushCriteria(app(RequestCriteria::class));
+    }
+
+    /**
+     * Specify Presenter class name
+     *
+     * @return string
+     */
+    public function presenter()
+    {
+        return BillPayPresenter::class;
     }
 
     /**

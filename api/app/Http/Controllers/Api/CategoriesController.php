@@ -3,8 +3,8 @@
 namespace Backend\Http\Controllers\Api;
 
 use Backend\Http\Controllers\Controller;
-use Backend\Repositories\CategoryRepository;
 use Backend\Http\Requests\CategoryRequest;
+use Backend\Repositories\CategoryRepository;
 
 class CategoriesController extends Controller
 {
@@ -17,6 +17,7 @@ class CategoriesController extends Controller
     public function __construct(CategoryRepository $repository)
     {
         $this->repository = $repository;
+        $this->repository->applyMultitenancy();
     }
 
     /**

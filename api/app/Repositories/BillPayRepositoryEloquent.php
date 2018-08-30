@@ -4,9 +4,7 @@ namespace Backend\Repositories;
 
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Criteria\RequestCriteria;
-use Backend\Repositories\BillPayRepository;
 use Backend\Models\BillPay;
-use Backend\Validators\BillPayValidator;
 
 /**
  * Class BillPayRepositoryEloquent
@@ -24,13 +22,19 @@ class BillPayRepositoryEloquent extends BaseRepository implements BillPayReposit
         return BillPay::class;
     }
 
-    
-
     /**
      * Boot up the repository, pushing criteria
      */
     public function boot()
     {
         $this->pushCriteria(app(RequestCriteria::class));
+    }
+
+    /**
+     * Applying method applyMultitenancy for Clear Booted BillPay Model
+     */
+    public function applyMultitenancy()
+    {
+        BillPay::clearBootedModels();
     }
 }

@@ -22,13 +22,19 @@ class CategoryRepositoryEloquent extends BaseRepository implements CategoryRepos
         return Category::class;
     }
 
-    
-
     /**
      * Boot up the repository, pushing criteria
      */
     public function boot()
     {
         $this->pushCriteria(app(RequestCriteria::class));
+    }
+
+    /**
+     * Applying method applyMultitenancy for Clear Booted Category Model
+     */
+    public function applyMultitenancy()
+    {
+        Category::clearBootedModels();
     }
 }

@@ -11,6 +11,7 @@ use Backend\Models\BillPay;
  */
 class BillPayTransformer extends TransformerAbstract
 {
+    protected $defaultIncludes = ['category'];
 
     /**
      * Transform the \BillPay entity
@@ -29,5 +30,9 @@ class BillPayTransformer extends TransformerAbstract
             'created_at' => $model->created_at,
             'updated_at' => $model->updated_at
         ];
+    }
+
+    public function includeCategory(BillPay $billPay){
+        return $this->item($billPay->category, new CategoryTransformer());
     }
 }

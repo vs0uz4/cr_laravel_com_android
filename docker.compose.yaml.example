@@ -57,7 +57,7 @@ services:
       - "6379:6379"
 
   app:
-    image: ambientum/php:latest-nginx
+    image: ambientum/php:7.1-nginx
     container_name: sandbox-app
     networks:
       sandbox_net:
@@ -71,7 +71,7 @@ services:
       - cache
 
   queue:
-    image: ambientum/php:7.0
+    image: ambientum/php:7.1
     container_name: sandbox-queue
     networks:
       sandbox_net:

@@ -85,4 +85,8 @@ class BillPaysController extends Controller
             return response()->json(['error' => 'resource_can_not_be_deleted'], 500);
         }
     }
+
+    public function calculateTotal(){
+        return $this->repository->calculateTotal();
+    }
 }

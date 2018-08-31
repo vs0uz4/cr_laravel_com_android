@@ -3,6 +3,7 @@
 namespace Backend\Repositories;
 
 use Backend\Presenters\BillPayPresenter;
+use Illuminate\Support\Collection;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Backend\Models\BillPay;
@@ -47,5 +48,32 @@ class BillPayRepositoryEloquent extends BaseRepository implements BillPayReposit
     public function applyMultitenancy()
     {
         BillPay::clearBootedModels();
+    }
+
+    public function calculateTotal()
+    {
+        $result = [
+            'count'         => 0,
+            'count_paid'    => 0,
+            'total_paid'    => 0,
+            'total_be_paid' => 0
+        ];
+
+        /** @var Collection $billPays */
+        $billPays = $this->skipPresenter()->all();
+        $result['count'] = $billPays->count();
+        foreach ($billPays as $billPay){
+            $done = (bool) $billPay->done;
+            if ($done){
+                $value = (float) $billPay->value;
+                $result['count_paid']++;
+                $result['total_paid'] += $value;
+            } else {
+                $value = (float) $billPay->value;
+                $result['total_be_paid'] += $value;
+            }
+        }
+
+        return $result;
     }
 }

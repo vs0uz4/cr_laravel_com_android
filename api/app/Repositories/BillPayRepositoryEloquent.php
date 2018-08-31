@@ -50,6 +50,12 @@ class BillPayRepositoryEloquent extends BaseRepository implements BillPayReposit
         BillPay::clearBootedModels();
     }
 
+
+    /**
+     * Calculate totals and counts of BillPays
+     *
+     * @return array
+     */
     public function calculateTotal()
     {
         $result = [

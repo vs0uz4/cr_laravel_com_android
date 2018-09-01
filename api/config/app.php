@@ -169,7 +169,8 @@ return [
         Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
         Prettus\Repository\Providers\RepositoryServiceProvider::class,
         HipsterJazzbo\Landlord\LandlordServiceProvider::class,
-        \L5Swagger\L5SwaggerServiceProvider::class,
+        L5Swagger\L5SwaggerServiceProvider::class,
+        Barryvdh\Cors\ServiceProvider::class,
 
         /*
          * Application Service Providers...

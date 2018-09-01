@@ -1,9 +1,7 @@
 ## Curso Rápido - Laravel com Android
 
-### Parte 1 - Laravel
+### Parte 1 - Laravel (Instrutor - Luis Carlos)
 URL - https://www.schoolofnet.com/curso-laravel-com-android-parte-1/
-Instrutor - Luis Carlos
 
-### Parte 2 - Android
+### Parte 2 - Android (Instrutor - Leonan Luppi)
 URL - https://www.schoolofnet.com/curso-android-com-laravel-parte-2/
-Instrutor - Leonan Luppi

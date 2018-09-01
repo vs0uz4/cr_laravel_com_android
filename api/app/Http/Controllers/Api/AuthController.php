@@ -19,7 +19,7 @@ class AuthController extends Controller
      *         title="Backend API",
      *         description="BillPays API RESTful",
      *         @SWG\Contact(
-     *              name="Vitor Rodriuues",
+     *              name="Vitor Rodrigues",
      *              email="vitor.rodrigues@gmail.com",
      *              url="https://github.com/vs0uz4/cr_laravel_com_android"
      *         ),

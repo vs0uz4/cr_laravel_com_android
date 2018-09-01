@@ -21,6 +21,25 @@ class CategoriesController extends Controller
     }
 
     /**
+     * @SWG\Get(
+     *     path="/categories",
+     *     operationId="index",
+     *     tags={"Categories"},
+     *     summary="Display a Listing of the Categories",
+     *     description="Display a Listing of the Categories",
+     *     @SWG\Parameter(
+     *          name="Authorization",
+     *          in="header",
+     *          required=true,
+     *          type="string",
+     *          description="Bearer __token__"
+     *     ),
+     *     @SWG\Response(
+     *          response=200,
+     *          description="Return a Collection of Categories"
+     *     )
+     * )
+     *
      * Display a listing of the resource.
      *
      * @return mixed
@@ -31,9 +50,41 @@ class CategoriesController extends Controller
     }
 
     /**
+     * @SWG\Post(
+     *     path="/categories",
+     *     operationId="store",
+     *     tags={"Categories"},
+     *     summary="Create an Category",
+     *     description="Create an Category",
+     *     @SWG\Parameter(
+     *          name="Authorization",
+     *          in="header",
+     *          required=true,
+     *          type="string",
+     *          description="Bearer __token__"
+     *     ),
+     *     @SWG\Parameter(
+     *          name="body",
+     *          in="body",
+     *          required=true,
+     *          @SWG\Schema(
+     *              @SWG\Property( property="name", type="string" ),
+     *          )
+     *     ),
+     *     @SWG\Response(
+     *          response="201",
+     *          description="Return Created Category"
+     *     ),
+     *     @SWG\Response(
+     *          response="422",
+     *          description="Unprocessable Entity"
+     *     )
+     * )
+     *
      * Store a newly created resource in storage.
      *
      * @param CategoryRequest $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function store(CategoryRequest $request)
@@ -42,11 +93,40 @@ class CategoriesController extends Controller
         return response()->json($category, 201);
     }
 
-
     /**
+     * @SWG\Get(
+     *     path="/categories/{id}",
+     *     operationId="show",
+     *     tags={"Categories"},
+     *     summary="Display an Category",
+     *     description="Display an Category",
+     *     @SWG\Parameter(
+     *          name="Authorization",
+     *          in="header",
+     *          required=true,
+     *          type="string",
+     *          description="Bearer __token__"
+     *     ),
+     *     @SWG\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true,
+     *          type="integer"
+     *     ),
+     *     @SWG\Response(
+     *          response=200,
+     *          description="Return the Found Category"
+     *     ),
+     *     @SWG\Response(
+     *          response=404,
+     *          description="Resource not found"
+     *     )
+     * )
+     *
      * Display the specified resource.
      *
      * @param $id
+     *
      * @return mixed
      */
     public function show($id)
@@ -55,10 +135,52 @@ class CategoriesController extends Controller
     }
 
     /**
+     * @SWG\Put(
+     *     path="/categories/{id}",
+     *     operationId="update",
+     *     tags={"Categories"},
+     *     summary="Update Category",
+     *     description="Update Category",
+     *     @SWG\Parameter(
+     *          name="Authorization",
+     *          in="header",
+     *          required=true,
+     *          type="string",
+     *          description="Bearer __token__"
+     *     ),
+     *     @SWG\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true,
+     *          type="integer"
+     *     ),
+     *     @SWG\Parameter(
+     *          name="body",
+     *          in="body",
+     *          required=true,
+     *          @SWG\Schema(
+     *              @SWG\Property( property="name", type="string" ),
+     *          )
+     *     ),
+     *     @SWG\Response(
+     *          response="200",
+     *          description="Return the Updated Category"
+     *     ),
+     *     @SWG\Response(
+     *          response="404",
+     *          description="Resource not Found"
+     *     ),
+     *     @SWG\Response(
+     *          response="422",
+     *          description="Unprocessable Entity"
+     *     )
+     * )
+     *
      * Update the specified resource in storage.
      *
      * @param CategoryRequest $request
      * @param string $id
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function update(CategoryRequest $request, $id)
@@ -68,9 +190,43 @@ class CategoriesController extends Controller
     }
 
     /**
+     * @SWG\Delete(
+     *      path="/categories/{id}",
+     *      operationId="destroy",
+     *      tags={"Categories"},
+     *      summary="Delete an Category",
+     *      description="Delete an Category",
+     *     @SWG\Parameter(
+     *          name="Authorization",
+     *          in="header",
+     *          required=true,
+     *          type="string",
+     *          description="Bearer __token__"
+     *     ),
+     *     @SWG\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true,
+     *          type="integer"
+     *     ),
+     *     @SWG\Response(
+     *          response=204,
+     *          description="No content"
+     *     ),
+     *     @SWG\Response(
+     *          response=500,
+     *          description="Resource can not be deleted"
+     *     ),
+     *     @SWG\Response(
+     *          response=404,
+     *          description="Resource not Found"
+     *     ),
+     * )
+     *
      * Remove the specified resource from storage.
      *
      * @param int $id
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)

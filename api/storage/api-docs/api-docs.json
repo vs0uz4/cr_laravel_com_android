@@ -1,0 +1,557 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Backend API",
+        "description": "BillPays API RESTful",
+        "contact": {
+            "name": "Vitor Rodriuues",
+            "url": "https://github.com/vs0uz4/cr_laravel_com_android",
+            "email": "vitor.rodrigues@gmail.com"
+        },
+        "version": "0.0.1"
+    },
+    "basePath": "/api",
+    "schemes": [
+        "http"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Request an JWT Token",
+                "description": "Request an JWT Token",
+                "operationId": "login",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "email": {
+                                    "type": "string"
+                                },
+                                "password": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Return Created JWT Token"
+                    },
+                    "401": {
+                        "description": "Invalid Credentials"
+                    },
+                    "500": {
+                        "description": "Could not Create Token"
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Revoke a JWT Token",
+                "description": "Revoke a JWT Token",
+                "operationId": "logout",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Bearer __token__",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request - Invalid Token"
+                    },
+                    "401": {
+                        "description": "Unauthorized - Invalid Token"
+                    },
+                    "500": {
+                        "description": "Could not Invalidate Token"
+                    }
+                }
+            }
+        },
+        "/refresh_token": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Refresh a JWT Token",
+                "description": "Refresh a JWT Token",
+                "operationId": "refresh_token",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Bearer __token__",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Return a new JWT Token"
+                    },
+                    "500": {
+                        "description": "Could not Refresh Token"
+                    }
+                }
+            }
+        },
+        "/bill_pays": {
+            "get": {
+                "tags": [
+                    "BillPays"
+                ],
+                "summary": "Display a Listing of the BillPays",
+                "description": "Display a Listing of the BillPays",
+                "operationId": "index",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Bearer __token__",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Return a Collection of BillPays"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "BillPays"
+                ],
+                "summary": "Create an BillPay",
+                "description": "Create an BillPay",
+                "operationId": "store",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Bearer __token__",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "date_due": {
+                                    "type": "string",
+                                    "format": "date"
+                                },
+                                "value": {
+                                    "type": "number"
+                                },
+                                "category_id": {
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Return Created BillPay"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                }
+            }
+        },
+        "/bill_pays/{id}": {
+            "get": {
+                "tags": [
+                    "BillPays"
+                ],
+                "summary": "Display an BillPay",
+                "description": "Display an BillPay",
+                "operationId": "show",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Bearer __token__",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Return the Found BillPay"
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "BillPays"
+                ],
+                "summary": "Update BillPay",
+                "description": "Update BillPay",
+                "operationId": "update",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Bearer __token__",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "date_due": {
+                                    "type": "string",
+                                    "format": "date"
+                                },
+                                "value": {
+                                    "type": "number"
+                                },
+                                "category_id": {
+                                    "type": "integer"
+                                },
+                                "done": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Return the Updated BillPay"
+                    },
+                    "404": {
+                        "description": "Resource not Found"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "BillPays"
+                ],
+                "summary": "Delete an BillPay",
+                "description": "Delete an BillPay",
+                "operationId": "destroy",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Bearer __token__",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "500": {
+                        "description": "Resource can not be deleted"
+                    },
+                    "404": {
+                        "description": "Resource not Found"
+                    }
+                }
+            }
+        },
+        "/bill_pays/total": {
+            "get": {
+                "tags": [
+                    "BillPays"
+                ],
+                "summary": "Calculate totals and counts of BillPays",
+                "description": "Calculate totals and counts of BillPays",
+                "operationId": "calculateTotal",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Bearer __token__",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Return array of Totals and Counts of BillPays"
+                    }
+                }
+            }
+        },
+        "/categories": {
+            "get": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Display a Listing of the Categories",
+                "description": "Display a Listing of the Categories",
+                "operationId": "index",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Bearer __token__",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Return a Collection of Categories"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Create an Category",
+                "description": "Create an Category",
+                "operationId": "store",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Bearer __token__",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Return Created Category"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                }
+            }
+        },
+        "/categories/{id}": {
+            "get": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Display an Category",
+                "description": "Display an Category",
+                "operationId": "show",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Bearer __token__",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Return the Found Category"
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Update Category",
+                "description": "Update Category",
+                "operationId": "update",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Bearer __token__",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Return the Updated Category"
+                    },
+                    "404": {
+                        "description": "Resource not Found"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Delete an Category",
+                "description": "Delete an Category",
+                "operationId": "destroy",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Bearer __token__",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "500": {
+                        "description": "Resource can not be deleted"
+                    },
+                    "404": {
+                        "description": "Resource not Found"
+                    }
+                }
+            }
+        },
+        "/users": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Create an User",
+                "description": "Create an User",
+                "operationId": "store",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "email": {
+                                    "type": "string"
+                                },
+                                "password": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Return Created User"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {}
+}

@@ -18,9 +18,36 @@ class UsersController extends Controller
     }
 
     /**
+     * @SWG\Post(
+     *     path="/users",
+     *     operationId="store",
+     *     tags={"Users"},
+     *     summary="Create an User",
+     *     description="Create an User",
+     *     @SWG\Parameter(
+     *          name="body",
+     *          in="body",
+     *          required=true,
+     *          @SWG\Schema(
+     *              @SWG\Property( property="name", type="string" ),
+     *              @SWG\Property( property="email", type="string" ),
+     *              @SWG\Property( property="password", type="string"),
+     *          )
+     *     ),
+     *     @SWG\Response(
+     *          response="201",
+     *          description="Return Created User"
+     *     ),
+     *     @SWG\Response(
+     *          response="422",
+     *          description="Unprocessable Entity"
+     *     )
+     * )
+     *
      * Store a newly created resource in storage.
      *
-     * @param UserRequest $request
+     * @param  UserRequest $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function store(UserRequest $request){

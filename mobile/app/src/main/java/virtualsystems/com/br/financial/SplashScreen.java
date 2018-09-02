@@ -18,7 +18,14 @@ public class SplashScreen extends AppCompatActivity implements Runnable {
 
     @Override
     public void run() {
-        startActivity(new Intent(this, LoginActivity.class));
+        UserSession userSession = UserSession.getInstance(getApplicationContext());
+
+        if (!userSession.isUserLoggedIn()){
+            startActivity(new Intent(this, LoginActivity.class));
+        } else {
+            startActivity(new Intent(this, MainActivity.class));
+        }
+
         finish();
     }
 }

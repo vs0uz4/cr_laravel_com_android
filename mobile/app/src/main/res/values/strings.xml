@@ -23,6 +23,11 @@
         completions."
     </string>
 
+    <!-- Strings related to Categories Fragment -->
+    <string name="btn_new_category">New Category</string>
+    <string name="prompt_name_category">Name of category</string>
+    <string name="action_create_category">Save category</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

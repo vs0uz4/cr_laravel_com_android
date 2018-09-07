@@ -344,7 +344,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 codeStatus = response.getStatusLine().getStatusCode();
                 if (codeStatus != null && codeStatus != 401) {
                     UserSession userSession = UserSession.getInstance(getApplicationContext());
-                    userSession.setUser(result.getString("token"));
+                    userSession.setUserToken(result.getString("token"));
 
                     returnValue = true;
                 } else if (codeStatus == 500) {

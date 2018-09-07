@@ -24,9 +24,13 @@ public class UserSession {
         return userSession;
     }
 
-    public void setUser(String token){
+    public void setUserToken(String token){
         editor.putString("token", token);
         editor.commit();
+    }
+
+    public String getUserToken(){
+        return sharedPreferences.getString("token", "");
     }
 
     public Boolean isUserLoggedIn(){

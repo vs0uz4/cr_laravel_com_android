@@ -4,11 +4,14 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -20,6 +23,7 @@ import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.client.HttpClient;
+import cz.msebera.android.httpclient.client.methods.HttpDelete;
 import cz.msebera.android.httpclient.client.methods.HttpGet;
 import cz.msebera.android.httpclient.impl.client.HttpClientBuilder;
 import cz.msebera.android.httpclient.util.EntityUtils;
@@ -41,6 +45,7 @@ public class Categories extends Fragment implements View.OnClickListener {
         btnNewCategory.setOnClickListener(this);
 
         listCategory = (ListView) view.findViewById(R.id.list_categories);
+        registerForContextMenu(listCategory);
 
         return view;
     }
@@ -65,6 +70,23 @@ public class Categories extends Fragment implements View.OnClickListener {
         ft.commit();
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo){
+        super.onCreateContextMenu(menu, view, menuInfo);
+
+        menu.setHeaderTitle("Options");
+        menu.add(0, view.getId(), 0, "Delete");
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item){
+        if (item.getTitle() == "Delete"){
+            deleteCategory();
+        }
+
+        return true;
+    }
+
     public void findCategories() throws IOException, JSONException {
         HttpGet clientGet = new HttpGet("http://192.168.254.8/api/categories");
 
@@ -73,16 +95,45 @@ public class Categories extends Fragment implements View.OnClickListener {
 
         String json = EntityUtils.toString(response.getEntity());
         JSONObject result = new JSONObject(json);
-        JSONArray dataArray = result.getJSONArray("data");
 
-        for (int i = 0; i < dataArray.length(); i++) {
-            JSONObject data = dataArray.getJSONObject(i);
+        for (int i = 0; i < result.getJSONArray("data").length(); i++) {
+            JSONObject data = result.getJSONArray("data").getJSONObject(i);
 
             categories.add(new Category(data.getString("id"), data.getString("name")));
         }
 
         caCategories = new CustomAdapterCategories(getContext(), 0, categories);
         listCategory.setAdapter(caCategories);
+    }
+
+    public void deleteCategory(){
+        View view = (View) getView().getParent();
+        TextView txtId = (TextView) view.findViewById(R.id.txt_category_id);
+        Integer id = Integer.parseInt(String.valueOf(txtId.getText()));
+
+        HttpDelete clientDelete = new HttpDelete("http://192.168.254.8/api/categories/" + id.toString());
+        clientDelete.addHeader("Authorization", "Bearer " + UserSession.getInstance(getContext()).getUserToken());
+        HttpResponse response = null;
+
+        try {
+            response = httpClient.execute(clientDelete);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        int statusCode = response.getStatusLine().getStatusCode();
+
+        if (statusCode == 204){
+            updateUI(categories);
+
+            try {
+                findCategories();
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            }
+
+            Toast.makeText(getContext(), "Deleted", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void updateUI(ArrayList<Category> items){

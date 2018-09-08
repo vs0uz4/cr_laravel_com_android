@@ -31,9 +31,6 @@ services:
   mysql:
     image: ambientum/mysql:5.7
     container_name: sandbox-mysql
-    networks:
-      sandbox_net:
-        ipv4_address: 192.168.0.2
     volumes:
       - sandbox-mysql-data:/var/lib/mysql
     ports:
@@ -47,9 +44,6 @@ services:
   cache:
     image: ambientum/redis:3.2
     container_name: sandbox-redis
-    networks:
-      sandbox_net:
-        ipv4_address: 192.168.0.3
     command: --appendonly yes
     volumes:
       - sandbox-redis-data:/data
@@ -59,9 +53,6 @@ services:
   app:
     image: ambientum/php:7.1-nginx
     container_name: sandbox-app
-    networks:
-      sandbox_net:
-        ipv4_address: 192.168.0.4
     volumes:
       - ./api:/var/www/app
     ports:
@@ -69,12 +60,3 @@ services:
     links:
       - mysql
       - cache
-
-networks:
-  sandbox_net:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-      - subnet: 192.168.0.0/24
-        gateway: 192.168.0.1

@@ -71,9 +71,9 @@ public class NewCategory extends Fragment implements View.OnClickListener {
 
             JSONObject result = new JSONObject(json);
 
-            getFragmentManager().popBackStack();
+            Toast.makeText(getContext(), "Created", Toast.LENGTH_SHORT).show();
 
-            Toast.makeText(getContext(), result.toString(), Toast.LENGTH_SHORT).show();
+            getFragmentManager().popBackStack();
         } catch (JSONException | UnsupportedEncodingException | ClientProtocolException e) {
             e.printStackTrace();
         } catch (IOException e) {

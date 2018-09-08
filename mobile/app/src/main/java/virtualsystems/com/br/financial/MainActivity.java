@@ -1,5 +1,6 @@
 package virtualsystems.com.br.financial;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.Fragment;
@@ -12,9 +13,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.client.HttpClient;
+import cz.msebera.android.httpclient.client.methods.HttpGet;
+import cz.msebera.android.httpclient.impl.client.HttpClientBuilder;
+import cz.msebera.android.httpclient.util.EntityUtils;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private HttpClient httpClient = HttpClientBuilder.create().build();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +109,13 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_bills:
                 fragment = new Bills();
                 break;
+            case R.id.nav_logout:
+                try {
+                    logoutUser();
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                }
+                break;
         }
 
         if (fragment != null){
@@ -104,5 +126,23 @@ public class MainActivity extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+    }
+
+    private void logoutUser() throws IOException, JSONException {
+        HttpGet clientGet = new HttpGet("http://192.168.254.8/api/logout");
+
+        clientGet.addHeader("Authorization", "Bearer " + UserSession.getInstance(this).getUserToken());
+
+        HttpResponse response = httpClient.execute(clientGet);
+
+        String json = EntityUtils.toString(response.getEntity());
+        int statusCode = response.getStatusLine().getStatusCode();
+
+        if (statusCode == 204){
+            UserSession.getInstance(this).clearSession();
+        }
+
+        startActivity(new Intent(this, LoginActivity.class));
+
     }
 }

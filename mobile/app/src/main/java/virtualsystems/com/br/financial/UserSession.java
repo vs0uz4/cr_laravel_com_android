@@ -36,4 +36,9 @@ public class UserSession {
     public Boolean isUserLoggedIn(){
         return sharedPreferences.getString("token", "").length() > 0;
     }
+
+    public void clearSession() {
+        // editor.clear();
+        editor.remove("token").commit();
+    }
 }

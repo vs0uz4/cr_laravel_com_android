@@ -4,17 +4,18 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -74,14 +75,19 @@ public class Categories extends Fragment implements View.OnClickListener {
     public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo){
         super.onCreateContextMenu(menu, view, menuInfo);
 
+        Integer itemId = (Integer) view.getId();
+
         menu.setHeaderTitle("Options");
-        menu.add(0, view.getId(), 0, "Delete");
+        menu.add(0, itemId, 0, "Delete");
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item){
         if (item.getTitle() == "Delete"){
-            deleteCategory();
+            AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+            Integer itemSelected = Integer.parseInt(String.valueOf(caCategories.getItem(acmi.position).getId()));
+
+            deleteCategory(itemSelected);
         }
 
         return true;
@@ -106,12 +112,8 @@ public class Categories extends Fragment implements View.OnClickListener {
         listCategory.setAdapter(caCategories);
     }
 
-    public void deleteCategory(){
-        View view = (View) getView().getParent();
-        TextView txtId = (TextView) view.findViewById(R.id.txt_category_id);
-        Integer id = Integer.parseInt(String.valueOf(txtId.getText()));
-
-        HttpDelete clientDelete = new HttpDelete("http://192.168.254.8/api/categories/" + id.toString());
+    public void deleteCategory(Integer Id){
+        HttpDelete clientDelete = new HttpDelete("http://192.168.254.8/api/categories/" + Id.toString());
         clientDelete.addHeader("Authorization", "Bearer " + UserSession.getInstance(getContext()).getUserToken());
         HttpResponse response = null;
 

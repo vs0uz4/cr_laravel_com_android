@@ -10,6 +10,7 @@ class AuthController extends Controller
 {
     /**
      * @SWG\Swagger(
+     *     swagger="2.0",
      *     basePath="/api",
      *     schemes={"http"},
      *     consumes={"application/json"},
@@ -23,6 +24,33 @@ class AuthController extends Controller
      *              email="vitor.rodrigues@gmail.com",
      *              url="https://github.com/vs0uz4/cr_laravel_com_android"
      *         ),
+     *     ),
+     *     @SWG\Definition(
+     *         definition="User",
+     *         required={"id", "name", "email", "created_at", "updated_at"},
+     *         @SWG\Property(
+     *             property="id",
+     *             type="integer",
+     *             format="int64"
+     *         ),
+     *         @SWG\Property(
+     *             property="name",
+     *             type="string"
+     *         ),
+     *         @SWG\Property(
+     *             property="email",
+     *             type="string"
+     *         ),
+     *         @SWG\Property(
+     *             property="created_at",
+     *             type="string",
+     *             format="date-time"
+     *         ),
+     *         @SWG\Property(
+     *             property="updated_at",
+     *             type="string",
+     *             format="date-time"
+     *         )
      *     )
      * )
      */
@@ -45,16 +73,21 @@ class AuthController extends Controller
      *     ),
      *     @SWG\Response(
      *          response="200",
-     *          description="Return Created JWT Token"
+     *          description="Return Token and User",
+     *          @SWG\Schema(
+     *              required={"token","user"},
+     *              @SWG\Property( property="token", type="string", example="Bearer _token_"),
+     *              @SWG\Property( property="user", type="object", ref="#/definitions/User"),
+     *          ),
      *     ),
      *     @SWG\Response(
      *          response="401",
-     *          description="Invalid Credentials"
+     *          description="Invalid Credentials",
      *     ),
      *     @SWG\Response(
      *          response="500",
-     *          description="Could not Create Token"
-     *     )
+     *          description="Could not Create Token",
+     *     ),
      * )
      *
      * Request a JWT Token
@@ -77,7 +110,9 @@ class AuthController extends Controller
             return response()->json(['error' => 'invalid_credentials'], 401);
         }
 
-        return response()->json(compact('token'), 200);
+        $user = \JWTAuth::toUser($token);
+
+        return response()->json(compact(['token', 'user']), 200);
     }
 
     /**

@@ -48,7 +48,23 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Return Created JWT Token"
+                        "description": "Return Token and User",
+                        "schema": {
+                            "required": [
+                                "token",
+                                "user"
+                            ],
+                            "properties": {
+                                "token": {
+                                    "type": "string",
+                                    "example": "Bearer _token_"
+                                },
+                                "user": {
+                                    "type": "object",
+                                    "$ref": "#/definitions/User"
+                                }
+                            }
+                        }
                     },
                     "401": {
                         "description": "Invalid Credentials"
@@ -553,5 +569,35 @@
             }
         }
     },
-    "definitions": {}
+    "definitions": {
+        "User": {
+            "required": [
+                "id",
+                "name",
+                "email",
+                "created_at",
+                "updated_at"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        }
+    }
 }

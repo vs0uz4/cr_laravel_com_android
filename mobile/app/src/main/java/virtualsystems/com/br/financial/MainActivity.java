@@ -1,5 +1,6 @@
 package virtualsystems.com.br.financial;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -13,24 +14,27 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.io.IOException;
 
 import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.client.HttpClient;
-import cz.msebera.android.httpclient.client.methods.HttpGet;
+import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.impl.client.HttpClientBuilder;
-import cz.msebera.android.httpclient.util.EntityUtils;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private HttpClient httpClient = HttpClientBuilder.create().build();
 
+    @SuppressLint("CheckResult")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,8 +55,31 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        View headerView = navigationView.getHeaderView(0);
+        TextView navUsername = (TextView) headerView.findViewById(R.id.nav_header_username);
+        TextView navEmail = (TextView) headerView.findViewById(R.id.nav_header_email);
+        ImageView navAvatar = (ImageView) headerView.findViewById(R.id.nav_header_avatar);
+
+        UserSession userSession = UserSession.getInstance(getApplicationContext());
+
+        navUsername.setText(userSession.getUserName());
+        navEmail.setText(userSession.getUserEmail());
+
+        String imgURL = (String) userSession.getUserAvatar();
+
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions.placeholder(R.mipmap.ic_launcher_round);
+        requestOptions.error(R.mipmap.ic_launcher_round);
+
+        Glide.with(this)
+                .load(imgURL)
+                .apply(requestOptions)
+                .into(navAvatar);
+
         displayFragment(R.id.nav_home);
     }
+
+
 
     @Override
     public void onBackPressed() {
@@ -80,6 +107,7 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Toast.makeText(this, "Settings Clicked", Toast.LENGTH_SHORT).show();
             return true;
         }
 
@@ -112,7 +140,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_logout:
                 try {
                     logoutUser();
-                } catch (IOException | JSONException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
@@ -128,21 +156,31 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
     }
 
-    private void logoutUser() throws IOException, JSONException {
-        HttpGet clientGet = new HttpGet("http://192.168.254.8/api/logout");
+    private void logoutUser() throws IOException {
+        HttpPost clientPost = new HttpPost("http://192.168.254.8/api/logout");
 
-        clientGet.addHeader("Authorization", "Bearer " + UserSession.getInstance(this).getUserToken());
+        clientPost.addHeader("Content-Type", "application/json");
+        clientPost.addHeader("Accept", "application/json");
+        clientPost.addHeader("Authorization", "Bearer " + UserSession.getInstance(this).getUserToken());
 
-        HttpResponse response = httpClient.execute(clientGet);
-
-        String json = EntityUtils.toString(response.getEntity());
+        HttpResponse response = httpClient.execute(clientPost);
         int statusCode = response.getStatusLine().getStatusCode();
 
-        if (statusCode == 204){
-            UserSession.getInstance(this).clearSession();
+        switch (statusCode){
+            case 204:
+                UserSession.getInstance(this).clearSession();
+                break;
+            case 400:
+                Toast.makeText(this, "Bad Request - Invalid Token", Toast.LENGTH_SHORT).show();
+                break;
+            case 401:
+                Toast.makeText(this, "Unauthorized - Invalid Token", Toast.LENGTH_SHORT).show();
+                break;
+            case 500:
+                Toast.makeText(this, "Could not Invalidate Token", Toast.LENGTH_SHORT).show();
+                break;
         }
 
         startActivity(new Intent(this, LoginActivity.class));
-
     }
 }

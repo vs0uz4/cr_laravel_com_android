@@ -320,6 +320,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             HttpPost clientPost = new HttpPost("http://192.168.254.8/api/login");
             JSONObject jsonObject = new JSONObject();
             JSONObject result = null;
+            JSONObject user = null;
             StringEntity bodyRequest = null;
             Integer codeStatus = null;
             Boolean returnValue = null;
@@ -342,15 +343,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 result = new JSONObject(json);
 
                 codeStatus = response.getStatusLine().getStatusCode();
-                if (codeStatus != null && codeStatus != 401) {
+                if (codeStatus != null && codeStatus == 200) {
+                    user = new JSONObject(json).getJSONObject("user");
+
                     UserSession userSession = UserSession.getInstance(getApplicationContext());
                     userSession.setUserToken(result.getString("token"));
+                    userSession.setUserName(user.getString("name"));
+                    userSession.setUserEmail(user.getString("email"));
+                    userSession.setUserAvatar(user.getString("email"));
 
                     returnValue = true;
                 } else if (codeStatus == 500) {
                     responseMessage = "Could not Create Token";
                     returnValue = false;
-                } else {
+                } else if (codeStatus == 401){
                     responseMessage= "Invalid Credentials";
                     returnValue = false;
                 }

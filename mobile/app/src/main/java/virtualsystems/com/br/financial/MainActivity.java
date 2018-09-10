@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity
 
         switch (statusCode){
             case 204:
-                UserSession.getInstance(this).clearSession();
+                Toast.makeText(this, "Disconected", Toast.LENGTH_SHORT).show();
                 break;
             case 400:
                 Toast.makeText(this, "Bad Request - Invalid Token", Toast.LENGTH_SHORT).show();
@@ -181,6 +181,7 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
 
+        UserSession.getInstance(this).clearSession();
         startActivity(new Intent(this, LoginActivity.class));
     }
 }

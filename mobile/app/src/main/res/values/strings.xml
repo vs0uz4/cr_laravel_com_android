@@ -6,11 +6,12 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_login">Sign in</string>
+
     <!-- Strings related to splash_screen -->
     <string name="splash_screen_text">Welcome to Financial</string>
 
     <!-- Strings related to login -->
+    <string name="title_activity_login">Sign in</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in</string>
@@ -28,6 +29,14 @@
     <string name="prompt_name_category">Name of category</string>
     <string name="action_create_category">Save category</string>
     <string name="action_delete_category">Delete</string>
+
+    <!-- Strings related to Bills Fragment -->
+    <string name="btn_new_bill">New Bill</string>
+    <string name="prompt_name_bill">Name of bill</string>
+    <string name="prompt_value_bill">Value of bill</string>
+    <string name="prompt_select_category">Select Category</string>
+    <string name="action_create_bill">Save bill</string>
+    <string name="action_delete_bill">Delete</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

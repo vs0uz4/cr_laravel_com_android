@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
@@ -29,6 +28,7 @@ import cz.msebera.android.httpclient.client.ClientProtocolException;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.methods.HttpGet;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
+import cz.msebera.android.httpclient.entity.ContentType;
 import cz.msebera.android.httpclient.entity.StringEntity;
 import cz.msebera.android.httpclient.impl.client.HttpClientBuilder;
 import cz.msebera.android.httpclient.util.EntityUtils;
@@ -104,13 +104,12 @@ public class NewBill extends Fragment implements View.OnClickListener {
         clientPost.addHeader("Accept", "application/json");
         clientPost.addHeader("Authorization", "Bearer " + UserSession.getInstance(getContext()).getUserToken());
 
-
         try {
             requestBody.put("name", mBillName.getText());
             requestBody.put("value", Integer.parseInt(mBillValue.getText().toString()));
             requestBody.put("category_id", Integer.parseInt(selectedCategory.getId().toString()));
             requestBody.put("date_due", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
-            data = new StringEntity(requestBody.toString());
+            data = new StringEntity(requestBody.toString(), ContentType.APPLICATION_JSON);
             clientPost.setEntity(data);
 
             HttpResponse response = httpClient.execute(clientPost);

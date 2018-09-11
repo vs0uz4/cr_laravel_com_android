@@ -13,8 +13,8 @@ class CategoryTransformer extends TransformerAbstract
 {
 
     /**
-     * Transform the \Category entity
-     * @param \Category $model
+     * Transform the Category entity
+     * @param Category $model
      *
      * @return array
      */

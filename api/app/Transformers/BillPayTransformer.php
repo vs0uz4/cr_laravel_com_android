@@ -14,8 +14,8 @@ class BillPayTransformer extends TransformerAbstract
     protected $defaultIncludes = ['category'];
 
     /**
-     * Transform the \BillPay entity
-     * @param \BillPay $model
+     * Transform the BillPay entity
+     * @param BillPay $model
      *
      * @return array
      */
@@ -32,7 +32,7 @@ class BillPayTransformer extends TransformerAbstract
         ];
     }
 
-    public function includeCategory(BillPay $billPay){
-        return $this->item($billPay->category, new CategoryTransformer());
+    public function includeCategory(BillPay $model){
+        return $model->category ? $this->item($model->category, new CategoryTransformer()) : $this->null();
     }
 }

@@ -94,53 +94,81 @@ public class Categories extends Fragment implements View.OnClickListener {
     public void findCategories() throws IOException, JSONException {
         HttpGet clientGet = new HttpGet("http://192.168.254.8/api/categories");
 
+        Integer statusCode = null;
+        String responseMessage = null;
+
         clientGet.addHeader("Content-Type", "application/json");
         clientGet.addHeader("Accept", "application/json");
         clientGet.addHeader("Authorization", "Bearer " + UserSession.getInstance(getContext()).getUserToken());
 
         HttpResponse response = httpClient.execute(clientGet);
+        String responseBody = EntityUtils.toString(response.getEntity(), "UTF-8");
 
-        String json = EntityUtils.toString(response.getEntity());
-        JSONObject result = new JSONObject(json);
 
-        for (int i = 0; i < result.getJSONArray("data").length(); i++) {
-            JSONObject data = result.getJSONArray("data").getJSONObject(i);
+        statusCode = response.getStatusLine().getStatusCode();
+        switch (statusCode) {
+            case 200:
+                JSONObject result = new JSONObject(responseBody);
 
-            categories.add(new Category(data.getString("id"), data.getString("name")));
+                for (int i = 0; i < result.getJSONArray("data").length(); i++) {
+                    JSONObject responseData = result.getJSONArray("data").getJSONObject(i);
+
+                    categories.add(new Category(responseData.getString("id"), responseData.getString("name")));
+                }
+
+                caCategories = new CustomAdapterCategories(getContext(), 0, categories);
+                listCategory.setAdapter(caCategories);
+
+                break;
+            default:
+                String errorCode = statusCode.toString();
+                String errorMsg = response.getStatusLine().getReasonPhrase().toString();
+                responseMessage  = "Error: " + errorCode + "\n" + errorMsg;
+
+                Toast.makeText(getContext(), responseMessage, Toast.LENGTH_SHORT).show();
+
+                break;
         }
-
-        caCategories = new CustomAdapterCategories(getContext(), 0, categories);
-        listCategory.setAdapter(caCategories);
     }
 
-    public void deleteCategory(Integer Id){
+    public void deleteCategory(Integer Id) {
         HttpDelete clientDelete = new HttpDelete("http://192.168.254.8/api/categories/" + Id.toString());
+
+        Integer statusCode = null;
+        String responseMessage = null;
 
         clientDelete.addHeader("Content-Type", "application/json");
         clientDelete.addHeader("Accept", "application/json");
         clientDelete.addHeader("Authorization", "Bearer " + UserSession.getInstance(getContext()).getUserToken());
 
-        HttpResponse response = null;
-
         try {
-            response = httpClient.execute(clientDelete);
-        } catch (IOException e) {
+            HttpResponse response = httpClient.execute(clientDelete);
+
+            statusCode = response.getStatusLine().getStatusCode();
+            switch (statusCode) {
+                case 204:
+                    updateUI(categories);
+                    findCategories();
+                    responseMessage = "Category Deleted";
+                    break;
+                case 404:
+                    responseMessage = "Resource not Found";
+                    break;
+                case 500:
+                    responseMessage = "Resource can not be Deleted";
+                    break;
+                default:
+                    String errorCode = statusCode.toString();
+                    String errorMsg = response.getStatusLine().getReasonPhrase().toString();
+                    responseMessage  = "Error: " + errorCode + "\n" + errorMsg;
+                    break;
+            }
+
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
 
-        int statusCode = response.getStatusLine().getStatusCode();
-
-        if (statusCode == 204){
-            updateUI(categories);
-
-            try {
-                findCategories();
-            } catch (IOException | JSONException e) {
-                e.printStackTrace();
-            }
-
-            Toast.makeText(getContext(), "Deleted", Toast.LENGTH_SHORT).show();
-        }
+        Toast.makeText(getContext(), responseMessage, Toast.LENGTH_SHORT).show();
     }
 
     public void updateUI(ArrayList<Category> items){

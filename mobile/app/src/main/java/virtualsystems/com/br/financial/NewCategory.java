@@ -20,6 +20,7 @@ import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.client.ClientProtocolException;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
+import cz.msebera.android.httpclient.entity.ContentType;
 import cz.msebera.android.httpclient.entity.StringEntity;
 import cz.msebera.android.httpclient.impl.client.HttpClientBuilder;
 import cz.msebera.android.httpclient.util.EntityUtils;
@@ -53,31 +54,47 @@ public class NewCategory extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view){
         HttpPost clientPost = new HttpPost("http://192.168.254.8/api/categories");
+
         JSONObject requestBody = new JSONObject();
-        StringEntity data = null;
+        StringEntity requestContent = null;
+        Integer statusCode = null;
+        String responseMessage = null;
 
         clientPost.addHeader("Content-Type", "application/json");
         clientPost.addHeader("Accept", "application/json");
         clientPost.addHeader("Authorization", "Bearer " + UserSession.getInstance(getContext()).getUserToken());
 
-
         try {
             requestBody.put("name", mCategoryName.getText());
-            data = new StringEntity(requestBody.toString());
-            clientPost.setEntity(data);
+
+            requestContent = new StringEntity(requestBody.toString(), ContentType.APPLICATION_JSON);
+            clientPost.setEntity(requestContent);
 
             HttpResponse response = httpClient.execute(clientPost);
-            String json = EntityUtils.toString(response.getEntity());
+            String responseBody = EntityUtils.toString(response.getEntity(), "UTF-8");
 
-            JSONObject result = new JSONObject(json);
+            statusCode = response.getStatusLine().getStatusCode();
+            switch (statusCode){
+                case 201:
+                    JSONObject result = new JSONObject(responseBody);
+                    responseMessage = "Created Category";
+                    break;
+                case 422:
+                    responseMessage = "Unprocessable Entity";
+                    break;
+                default:
+                    String errorCode = statusCode.toString();
+                    String errorMsg = response.getStatusLine().getReasonPhrase().toString();
+                    responseMessage = "Error: " + errorCode + "\n" + errorMsg;
+                    break;
+            }
 
-            Toast.makeText(getContext(), "Created", Toast.LENGTH_SHORT).show();
-
-            getFragmentManager().popBackStack();
-        } catch (JSONException | UnsupportedEncodingException | ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
+
+        Toast.makeText(getContext(), responseMessage, Toast.LENGTH_SHORT).show();
+
+        getFragmentManager().popBackStack();
     }
 }

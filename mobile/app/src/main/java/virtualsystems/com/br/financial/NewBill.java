@@ -17,14 +17,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 import cz.msebera.android.httpclient.HttpResponse;
-import cz.msebera.android.httpclient.client.ClientProtocolException;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.methods.HttpGet;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
@@ -96,9 +94,11 @@ public class NewBill extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view){
         HttpPost clientPost = new HttpPost("http://192.168.254.8/api/bill_pays");
+
         JSONObject requestBody = new JSONObject();
-        StringEntity data = null;
+        StringEntity requestContent = null;
         Integer statusCode = null;
+        String responseMessage = null;
 
         clientPost.addHeader("Content-Type", "application/json");
         clientPost.addHeader("Accept", "application/json");
@@ -109,78 +109,91 @@ public class NewBill extends Fragment implements View.OnClickListener {
             requestBody.put("value", Integer.parseInt(mBillValue.getText().toString()));
             requestBody.put("category_id", Integer.parseInt(selectedCategory.getId().toString()));
             requestBody.put("date_due", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
-            data = new StringEntity(requestBody.toString(), ContentType.APPLICATION_JSON);
-            clientPost.setEntity(data);
+
+            requestContent = new StringEntity(requestBody.toString(), ContentType.APPLICATION_JSON);
+            clientPost.setEntity(requestContent);
 
             HttpResponse response = httpClient.execute(clientPost);
-            String json = EntityUtils.toString(response.getEntity());
-            statusCode = response.getStatusLine().getStatusCode();
+            String responseBody = EntityUtils.toString(response.getEntity(), "UTF-8");
 
+            statusCode = response.getStatusLine().getStatusCode();
             switch (statusCode){
                 case 201:
-                    JSONObject result = new JSONObject(json);
-                    Toast.makeText(getContext(), "Created Bill", Toast.LENGTH_SHORT).show();
+                    JSONObject result = new JSONObject(responseBody);
+                    responseMessage = "Created Bill";
                     break;
                 case 422:
-                    Toast.makeText(getContext(), "Unprocessable Entity", Toast.LENGTH_SHORT).show();
+                    responseMessage = "Unprocessable Entity";
                     break;
                 default:
                     String errorCode = statusCode.toString();
                     String errorMsg = response.getStatusLine().getReasonPhrase().toString();
-                    Toast.makeText(getContext(), "Error: " + errorCode + "\n" + errorMsg, Toast.LENGTH_SHORT).show();
+                    responseMessage = "Error: " + errorCode + "\n" + errorMsg;
                     break;
             }
 
-            getFragmentManager().popBackStack();
-        } catch (JSONException | UnsupportedEncodingException | ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-}
-
-class GatCategoryAsync extends AsyncTask<Void, Void, ArrayList> {
-    private HttpClient httpClient = HttpClientBuilder.create().build();
-    private ArrayList<Category> categories = new ArrayList<Category>();
-    private String token;
-
-    public GatCategoryAsync(String token) {
-        this.token = token;
-    }
-
-    @Override
-    protected ArrayList<Category> doInBackground(Void... params) {
-        HttpResponse response = null;
-        JSONObject result = null;
-        String json = null;
-
-        HttpGet clientGet = new HttpGet("http://192.168.254.8/api/categories");
-
-        clientGet.addHeader("Content-Type", "application/json");
-        clientGet.addHeader("Accept", "application/json");
-        clientGet.addHeader("Authorization", "Bearer " + token);
-
-        try {
-            response = httpClient.execute(clientGet);
-            json = EntityUtils.toString(response.getEntity());
-        } catch (IOException e) {
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
 
+        Toast.makeText(getContext(), responseMessage, Toast.LENGTH_SHORT).show();
 
-        try {
-            result = new JSONObject(json);
+        getFragmentManager().popBackStack();
+    }
 
-            for (int i = 0; i < result.getJSONArray("data").length(); i++) {
-                JSONObject data = result.getJSONArray("data").getJSONObject(i);
+    /**
+     * Represents an asynchronous categories task used to get all
+     * categories.
+     */
+    public class GatCategoryAsync extends AsyncTask<Void, Void, ArrayList> {
+        private HttpClient httpClient = HttpClientBuilder.create().build();
+        private ArrayList<Category> categories = new ArrayList<Category>();
+        private String token;
 
-                categories.add(new Category(data.getString("id"), data.getString("name")));
+        public GatCategoryAsync(String token) {
+            this.token = token;
+        }
+
+        @Override
+        protected ArrayList<Category> doInBackground(Void... params) {
+            HttpGet clientGet = new HttpGet("http://192.168.254.8/api/categories");
+
+            Integer statusCode = null;
+            String responseMessage = null;
+
+            clientGet.addHeader("Content-Type", "application/json");
+            clientGet.addHeader("Accept", "application/json");
+            clientGet.addHeader("Authorization", "Bearer " + token);
+
+            try {
+                HttpResponse response = httpClient.execute(clientGet);
+                String responseBody = EntityUtils.toString(response.getEntity(), "UTF-8");
+
+                statusCode = response.getStatusLine().getStatusCode();
+                switch (statusCode) {
+                    case 200:
+                        JSONObject result = new JSONObject(responseBody);
+
+                        for (int i = 0; i < result.getJSONArray("data").length(); i++) {
+                            JSONObject responseData = result.getJSONArray("data").getJSONObject(i);
+
+                            categories.add(new Category(responseData.getString("id"), responseData.getString("name")));
+                        }
+                        break;
+                    default:
+                        String errorCode = statusCode.toString();
+                        String errorMsg = response.getStatusLine().getReasonPhrase().toString();
+                        responseMessage = "Error: " + errorCode + "\n" + errorMsg;
+
+                        Toast.makeText(getContext(), responseMessage, Toast.LENGTH_SHORT).show();
+
+                        break;
+                }
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
 
-        return categories;
+            return categories;
+        }
     }
 }

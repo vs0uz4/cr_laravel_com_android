@@ -158,30 +158,37 @@ public class MainActivity extends AppCompatActivity
 
     private void logoutUser() throws IOException {
         HttpPost clientPost = new HttpPost("http://192.168.254.8/api/logout");
+        String responseMessage;
 
         clientPost.addHeader("Content-Type", "application/json");
         clientPost.addHeader("Accept", "application/json");
         clientPost.addHeader("Authorization", "Bearer " + UserSession.getInstance(this).getUserToken());
 
         HttpResponse response = httpClient.execute(clientPost);
-        int statusCode = response.getStatusLine().getStatusCode();
+        Integer statusCode = response.getStatusLine().getStatusCode();
 
         switch (statusCode){
             case 204:
-                Toast.makeText(this, "Disconected", Toast.LENGTH_SHORT).show();
+                responseMessage = "Disconected";
                 break;
             case 400:
-                Toast.makeText(this, "Bad Request - Invalid Token", Toast.LENGTH_SHORT).show();
+                responseMessage = "Bad Request - Invalid Token";
                 break;
             case 401:
-                Toast.makeText(this, "Unauthorized - Invalid Token", Toast.LENGTH_SHORT).show();
+                responseMessage = "Unauthorized - Invalid Token";
                 break;
             case 500:
-                Toast.makeText(this, "Could not Invalidate Token", Toast.LENGTH_SHORT).show();
+                responseMessage = "Could not Invalidate Token";
+                break;
+            default:
+                String errorCode = statusCode.toString();
+                String errorMsg = response.getStatusLine().getReasonPhrase().toString();
+                responseMessage = "Error: " + errorCode + "\n" + errorMsg;
                 break;
         }
 
         UserSession.getInstance(this).clearSession();
+        Toast.makeText(this, responseMessage, Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, LoginActivity.class));
     }
 }

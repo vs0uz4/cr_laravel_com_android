@@ -41,6 +41,7 @@ import java.util.List;
 import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
+import cz.msebera.android.httpclient.entity.ContentType;
 import cz.msebera.android.httpclient.entity.StringEntity;
 import cz.msebera.android.httpclient.impl.client.HttpClientBuilder;
 import cz.msebera.android.httpclient.util.EntityUtils;
@@ -318,49 +319,53 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected Boolean doInBackground(Void... params) {
             HttpPost clientPost = new HttpPost("http://192.168.254.8/api/login");
-            JSONObject jsonObject = new JSONObject();
-            JSONObject result = null;
-            JSONObject user = null;
-            StringEntity bodyRequest = null;
-            Integer codeStatus = null;
-            Boolean returnValue = null;
 
-            try {
-                jsonObject.put("email", mEmail);
-                jsonObject.put("password", mPassword);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            JSONObject requestBody = new JSONObject();
+            StringEntity requestContent = null;
+            Integer statusCode = null;
+            Boolean returnValue = null;
 
             clientPost.addHeader("Content-Type", "application/json");
             clientPost.addHeader("Accept", "application/json");
-            clientPost.addHeader("Content-Type", "application/json");
 
             try {
-                bodyRequest = new StringEntity(jsonObject.toString());
-                clientPost.setEntity(bodyRequest);
-                HttpResponse response = httpClient.execute(clientPost);
+               requestBody.put("email", mEmail);
+               requestBody.put("password", mPassword);
 
-                String json = EntityUtils.toString(response.getEntity());
-                result = new JSONObject(json);
+               requestContent = new StringEntity(requestBody.toString(), ContentType.APPLICATION_JSON);
+               clientPost.setEntity(requestContent);
 
-                codeStatus = response.getStatusLine().getStatusCode();
-                if (codeStatus != null && codeStatus == 200) {
-                    user = new JSONObject(json).getJSONObject("user");
+               HttpResponse response = httpClient.execute(clientPost);
+               String responseBody = EntityUtils.toString(response.getEntity(), "UTF-8");
 
-                    UserSession userSession = UserSession.getInstance(getApplicationContext());
-                    userSession.setUserToken(result.getString("token"));
-                    userSession.setUserName(user.getString("name"));
-                    userSession.setUserEmail(user.getString("email"));
-                    userSession.setUserAvatar(user.getString("email"));
+               statusCode = response.getStatusLine().getStatusCode();
+               switch (statusCode) {
+                    case 200:
+                        JSONObject result = new JSONObject(responseBody);
+                        JSONObject user = new JSONObject(responseBody).getJSONObject("user");
 
-                    returnValue = true;
-                } else if (codeStatus == 500) {
-                    responseMessage = "Could not Create Token";
-                    returnValue = false;
-                } else if (codeStatus == 401){
-                    responseMessage= "Invalid Credentials";
-                    returnValue = false;
+                        UserSession userSession = UserSession.getInstance(getApplicationContext());
+                        userSession.setUserToken(result.getString("token"));
+                        userSession.setUserName(user.getString("name"));
+                        userSession.setUserEmail(user.getString("email"));
+                        userSession.setUserAvatar(user.getString("email"));
+
+                        returnValue = true;
+                        break;
+                    case 500:
+                        responseMessage = "Could not Create Token";
+                        returnValue = false;
+                        break;
+                    case 401:
+                        responseMessage= "Invalid Credentials";
+                        returnValue = false;
+                        break;
+                    default:
+                        String errorCode = statusCode.toString();
+                        String errorMsg = response.getStatusLine().getReasonPhrase().toString();
+                        responseMessage = "Error: " + errorCode + "\n" + errorMsg;
+                        returnValue= false;
+                        break;
                 }
 
             } catch (IOException | JSONException e) {

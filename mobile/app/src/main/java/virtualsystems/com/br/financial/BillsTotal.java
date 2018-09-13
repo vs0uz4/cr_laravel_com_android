@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,23 +52,41 @@ public class BillsTotal extends Fragment {
     public void findBills() throws IOException, JSONException {
         HttpGet clientGet = new HttpGet("http://192.168.254.8/api/bill_pays");
 
+        Integer statusCode = null;
+        String responseMessage = null;
+
         clientGet.addHeader("Content-Type", "application/json");
         clientGet.addHeader("Accept", "application/json");
         clientGet.addHeader("Authorization", "Bearer " + UserSession.getInstance(getContext()).getUserToken());
+
         HttpResponse response = httpClient.execute(clientGet);
+        String responseBody = EntityUtils.toString(response.getEntity(), "UTF-8");
 
-        String json = EntityUtils.toString(response.getEntity());
-        JSONObject result = new JSONObject(json);
+        statusCode = response.getStatusLine().getStatusCode();
+        switch (statusCode) {
+            case 200:
+                JSONObject result = new JSONObject(responseBody);
 
-        for (int i = 0; i < result.getJSONArray("data").length(); i++) {
-            JSONObject data = result.getJSONArray("data").getJSONObject(i);
+                for (int i = 0; i < result.getJSONArray("data").length(); i++) {
+                    JSONObject responseData = result.getJSONArray("data").getJSONObject(i);
 
-            billTotals = billTotals + data.getDouble("value");
+                    billTotals = billTotals + responseData.getDouble("value");
 
-            if (txtBillsTotal != null) {
-                NumberFormat numberFormat = NumberFormat.getCurrencyInstance();
-                txtBillsTotal.setText(numberFormat.format(billTotals).toString());
-            }
+                    if (txtBillsTotal != null) {
+                        NumberFormat numberFormat = NumberFormat.getCurrencyInstance();
+                        txtBillsTotal.setText(numberFormat.format(billTotals).toString());
+                    }
+                }
+
+                break;
+            default:
+                String errorCode = statusCode.toString();
+                String errorMsg = response.getStatusLine().getReasonPhrase().toString();
+                responseMessage  = "Error: " + errorCode + "\n" + errorMsg;
+
+                Toast.makeText(getContext(), responseMessage, Toast.LENGTH_SHORT).show();
+
+                break;
         }
     }
 }

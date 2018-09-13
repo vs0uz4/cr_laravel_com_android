@@ -3,9 +3,9 @@ package virtualsystems.com.br.financial;
 public class Bill {
     private String id;
     private String name;
-    private Integer value;
+    private Double value;
 
-    public Bill(String id, String name, Integer value) {
+    public Bill(String id, String name, Double value) {
         this.id = id;
         this.name = name;
         this.value = value;
@@ -27,11 +27,11 @@ public class Bill {
         this.name = name;
     }
 
-    public Integer getValue() {
+    public Double getValue() {
         return value;
     }
 
-    public void setValue(Integer value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 }

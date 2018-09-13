@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
 public class CustomAdapterBills extends ArrayAdapter<Bill> {
@@ -17,6 +18,7 @@ public class CustomAdapterBills extends ArrayAdapter<Bill> {
     @Override
     public View getView(int position, View view, ViewGroup parent){
         Bill bill = getItem(position);
+        NumberFormat numberFormat = NumberFormat.getCurrencyInstance();
 
         if (view == null){
             view = LayoutInflater.from(getContext()).inflate(R.layout.list_bills, parent, false);
@@ -32,7 +34,7 @@ public class CustomAdapterBills extends ArrayAdapter<Bill> {
         txtId.setText(bill.getId());
         txtName.setText(bill.getName());
         txtValue.setText(bill.getValue().toString());
-        txtSlug.setText(bill.getName() + " - R$ " + bill.getValue().toString());
+        txtSlug.setText(bill.getName() + " - " + numberFormat.format(bill.getValue()).toString());
 
         return view;
     }

@@ -76,7 +76,7 @@ public class Bills extends Fragment implements View.OnClickListener{
         for (int i = 0; i < result.getJSONArray("data").length(); i++) {
             JSONObject data = result.getJSONArray("data").getJSONObject(i);
 
-            bills.add(new Bill(data.getString("id"), data.getString("name"), data.getInt("value")));
+            bills.add(new Bill(data.getString("id"), data.getString("name"), data.getDouble("value")));
         }
 
         caBills = new CustomAdapterBills(getContext(), 0, bills);

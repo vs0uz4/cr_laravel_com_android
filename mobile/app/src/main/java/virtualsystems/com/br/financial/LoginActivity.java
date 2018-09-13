@@ -333,6 +333,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
 
             clientPost.addHeader("Content-Type", "application/json");
+            clientPost.addHeader("Accept", "application/json");
+            clientPost.addHeader("Content-Type", "application/json");
 
             try {
                 bodyRequest = new StringEntity(jsonObject.toString());

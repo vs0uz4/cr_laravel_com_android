@@ -94,7 +94,10 @@ public class Categories extends Fragment implements View.OnClickListener {
     public void findCategories() throws IOException, JSONException {
         HttpGet clientGet = new HttpGet("http://192.168.254.8/api/categories");
 
+        clientGet.addHeader("Content-Type", "application/json");
+        clientGet.addHeader("Accept", "application/json");
         clientGet.addHeader("Authorization", "Bearer " + UserSession.getInstance(getContext()).getUserToken());
+
         HttpResponse response = httpClient.execute(clientGet);
 
         String json = EntityUtils.toString(response.getEntity());
@@ -112,7 +115,11 @@ public class Categories extends Fragment implements View.OnClickListener {
 
     public void deleteCategory(Integer Id){
         HttpDelete clientDelete = new HttpDelete("http://192.168.254.8/api/categories/" + Id.toString());
+
+        clientDelete.addHeader("Content-Type", "application/json");
+        clientDelete.addHeader("Accept", "application/json");
         clientDelete.addHeader("Authorization", "Bearer " + UserSession.getInstance(getContext()).getUserToken());
+
         HttpResponse response = null;
 
         try {

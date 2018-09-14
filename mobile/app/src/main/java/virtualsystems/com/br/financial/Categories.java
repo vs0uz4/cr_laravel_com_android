@@ -92,7 +92,7 @@ public class Categories extends Fragment implements View.OnClickListener {
     }
 
     public void findCategories() throws IOException, JSONException {
-        HttpGet clientGet = new HttpGet("http://192.168.254.8/api/categories");
+        HttpGet clientGet = new HttpGet("http://bp-android-api.herokuapp.com/api/categories");
 
         Integer statusCode = null;
         String responseMessage = null;
@@ -132,7 +132,7 @@ public class Categories extends Fragment implements View.OnClickListener {
     }
 
     public void deleteCategory(Integer Id) {
-        HttpDelete clientDelete = new HttpDelete("http://192.168.254.8/api/categories/" + Id.toString());
+        HttpDelete clientDelete = new HttpDelete("http://bp-android-api.herokuapp.com/api/categories/" + Id.toString());
 
         Integer statusCode = null;
         String responseMessage = null;

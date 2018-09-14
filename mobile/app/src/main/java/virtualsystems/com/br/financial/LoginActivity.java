@@ -318,7 +318,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            HttpPost clientPost = new HttpPost("http://192.168.254.8/api/login");
+            HttpPost clientPost = new HttpPost("http://bp-android-api.herokuapp.com/api/login");
 
             JSONObject requestBody = new JSONObject();
             StringEntity requestContent = null;

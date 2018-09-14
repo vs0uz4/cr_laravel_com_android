@@ -50,7 +50,7 @@ public class BillsTotal extends Fragment {
     }
 
     public void findBills() throws IOException, JSONException {
-        HttpGet clientGet = new HttpGet("http://192.168.254.8/api/bill_pays");
+        HttpGet clientGet = new HttpGet("http://bp-android-api.herokuapp.com/api/bill_pays");
 
         Integer statusCode = null;
         String responseMessage = null;

@@ -93,7 +93,7 @@ public class NewBill extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view){
-        HttpPost clientPost = new HttpPost("http://192.168.254.8/api/bill_pays");
+        HttpPost clientPost = new HttpPost("http://bp-android-api.herokuapp.com/api/bill_pays");
 
         JSONObject requestBody = new JSONObject();
         StringEntity requestContent = null;
@@ -156,7 +156,7 @@ public class NewBill extends Fragment implements View.OnClickListener {
 
         @Override
         protected ArrayList<Category> doInBackground(Void... params) {
-            HttpGet clientGet = new HttpGet("http://192.168.254.8/api/categories");
+            HttpGet clientGet = new HttpGet("http://bp-android-api.herokuapp.com/api/categories");
 
             Integer statusCode = null;
             String responseMessage = null;

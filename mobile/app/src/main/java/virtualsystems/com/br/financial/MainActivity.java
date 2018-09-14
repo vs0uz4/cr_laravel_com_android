@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void logoutUser() throws IOException {
-        HttpPost clientPost = new HttpPost("http://192.168.254.8/api/logout");
+        HttpPost clientPost = new HttpPost("http://bp-android-api.herokuapp.com/api/logout");
         String responseMessage;
 
         clientPost.addHeader("Content-Type", "application/json");

@@ -53,7 +53,7 @@ public class NewCategory extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view){
-        HttpPost clientPost = new HttpPost("http://192.168.254.8/api/categories");
+        HttpPost clientPost = new HttpPost("http://bp-android-api.herokuapp.com/api/categories");
 
         JSONObject requestBody = new JSONObject();
         StringEntity requestContent = null;
